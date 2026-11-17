@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#1e3a8a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Control de Servicio Social</title>
+  <!-- Íconos para el acceso directo en celular (sube tu imagen como logo.png a GitHub) -->
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <style>
     :root {
       --primary: #1e3a8a;
@@ -141,18 +144,17 @@
     <!-- Formulario para generar nueva salida -->
     <div id="card-nueva-salida" class="card">
       <h2>1. Generar Pase de Salida</h2>
-      <p style="font-size: 0.88rem; color: var(--muted); margin-top: 0;">Sustituye la tarjeta impresa para salir de la preparatoria hacia el escenario.</p>
       <label for="select-escenario-salida">Escenario a visitar:</label>
       <select id="select-escenario-salida" onchange="mostrarDireccion('select-escenario-salida', 'dir-salida')"></select>
       <small id="dir-salida" style="display:block; margin-top:6px; color:var(--primary);"></small>
-      <button class="btn btn-success" onclick="generarSalida()">🎫 Generar Pase de Salida</button>
+      <button class="btn btn-success" onclick="generarSalida()">Generar Pase de Salida</button>
     </div>
 
     <!-- Acciones de Supervisión y Regreso -->
     <div class="card">
       <h2>2. Supervisión y Cierre</h2>
-      <button class="btn btn-primary" onclick="abrirSupervision()">📸 Registrar Visita y Evidencia</button>
-      <button id="btn-regreso" class="btn btn-danger hidden" onclick="confirmarRegreso()">🏫 Registrar Regreso a la Prepa</button>
+      <button class="btn btn-primary" onclick="abrirSupervision()">Registrar Visita y Evidencia</button>
+      <button id="btn-regreso" class="btn btn-danger hidden" onclick="confirmarRegreso()">Registrar Regreso a la Prepa</button>
     </div>
   </div>
 
@@ -169,17 +171,17 @@
 
     <label>Evidencia fotográfica (Cámara en vivo):</label>
     <div class="camara-box" onclick="document.getElementById('input-foto').click()">
-      📷 Toca aquí para abrir la cámara y tomar foto
+      Toca aquí para abrir la cámara y tomar foto
       <input type="file" id="input-foto" accept="image/*" capture="environment" class="hidden" onchange="procesarFoto(event)">
       <img id="preview-foto" alt="Vista previa">
     </div>
 
-    <div id="gps-box" class="gps-status">📍 Obteniendo ubicación GPS...</div>
+    <div id="gps-box" class="gps-status">Obteniendo ubicación GPS...</div>
 
     <label for="txt-obs">Observaciones / Incidencias (opcional):</label>
     <textarea id="txt-obs" rows="2" placeholder="Ej. Todos trabajando correctamente / Sin novedad"></textarea>
 
-    <button class="btn btn-success" onclick="enviarSupervision()">✅ Guardar Supervisión</button>
+    <button class="btn btn-success" onclick="enviarSupervision()">Guardar Supervisión</button>
     <button class="btn btn-outline" onclick="volverDashboard()">Cancelar y volver</button>
   </div>
 
@@ -195,7 +197,6 @@
   let coordsGPS = { lat: null, lng: null };
   let intervaloReloj = null;
 
-  // Función auxiliar para comunicarse con Apps Script sin bloqueos CORS
   async function llamarAPI(payload) {
     const response = await fetch(API_URL, {
       method: "POST",
@@ -205,7 +206,6 @@
     return await response.json();
   }
 
-  // Cargar catálogos al abrir
   window.onload = async function() {
     try {
       const response = await fetch(API_URL);
@@ -301,7 +301,7 @@
   function mostrarDireccion(selectId, labelId) {
     const esc = document.getElementById(selectId).value;
     const lbl = document.getElementById(labelId);
-    lbl.innerText = (esc && catalogos.escenarios[esc]) ? "📍 " + catalogos.escenarios[esc].direccion : "";
+    lbl.innerText = (esc && catalogos.escenarios[esc]) ? catalogos.escenarios[esc].direccion : "";
   }
 
   async function generarSalida() {
@@ -380,19 +380,19 @@
 
   function obtenerUbicacion() {
     const gpsBox = document.getElementById('gps-box');
-    gpsBox.innerText = '📍 Obteniendo ubicación GPS...';
+    gpsBox.innerText = 'Obteniendo ubicación GPS...';
     if (!navigator.geolocation) {
-      gpsBox.innerText = '⚠️ GPS no soportado en este navegador.';
+      gpsBox.innerText = 'GPS no soportado en este navegador.';
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         coordsGPS.lat = pos.coords.latitude.toFixed(6);
         coordsGPS.lng = pos.coords.longitude.toFixed(6);
-        gpsBox.innerText = `📍 Ubicación capturada (${coordsGPS.lat}, ${coordsGPS.lng})`;
+        gpsBox.innerText = `Ubicación capturada (${coordsGPS.lat}, ${coordsGPS.lng})`;
       },
       () => {
-        gpsBox.innerText = '⚠️ No se pudo obtener GPS (verifica permisos de ubicación).';
+        gpsBox.innerText = 'No se pudo obtener GPS (verifica permisos de ubicación).';
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -458,7 +458,7 @@
     try {
       const res = await llamarAPI({ accion: 'supervision', datos: payload });
       ocultarLoader();
-      alert('✅ Supervisión registrada correctamente (' + res.fechaHora + ')');
+      alert('Supervisión registrada correctamente (' + res.fechaHora + ')');
       actualizarVistaDashboard();
     } catch (e) {
       ocultarLoader();
@@ -475,7 +475,7 @@
       const res = await llamarAPI({ accion: 'regreso', folio: salidaActiva.folio });
       ocultarLoader();
       if (res.ok) {
-        alert('✅ Regreso registrado a las ' + res.horaRegreso + '. Pase finalizado.');
+        alert('Regreso registrado a las ' + res.horaRegreso + '. Pase finalizado.');
         salidaActiva = null;
         actualizarVistaDashboard();
       } else {
